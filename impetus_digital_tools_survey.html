@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Digital Tools Usage Survey</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .page { background: #f0f4f5; min-height: 100vh; padding: 2rem 1rem; }
+
+    .card {
+      background: #fff;
+      border-radius: 4px;
+      max-width: 780px;
+      margin: 0 auto 1.5rem;
+      padding: 2rem 2.5rem;
+      border: 0.5px solid #dde6e6;
+    }
+
+    .header-card { border-top: 5px solid #1E2142; }
+
+    .logo-section { margin-bottom: 1.5rem; }
+
+    .logo-img {
+      max-height: 60px;
+      max-width: 200px;
+      object-fit: contain;
+    }
+
+    .form-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1E2142;
+      margin-bottom: 0.4rem;
+    }
+    .accent-line { width: 40px; height: 3px; background: #4FBAB5; margin-bottom: 1.25rem; border-radius: 2px; }
+    .section-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1px; color: #4FBAB5; margin-bottom: 0.5rem;
+    }
+    .purpose-text { font-size: 14px; color: #444; line-height: 1.7; margin-bottom: 1.25rem; }
+
+    .definition-box {
+      background: #f4f8f8;
+      border-left: 3px solid #4FBAB5;
+      border-radius: 0 4px 4px 0;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .definition-box p { font-size: 14px; color: #444; line-height: 1.7; margin-bottom: 0.75rem; }
+    .definition-box p:last-child { margin-bottom: 0; }
+    .conditions-title { font-size: 13px; font-weight: 600; color: #1E2142; margin-bottom: 0.5rem; }
+
+    .condition-list { list-style: none; padding: 0; margin-bottom: 0.75rem; }
+    .condition-list li { font-size: 13px; color: #555; padding: 4px 0 4px 1.2rem; position: relative; line-height: 1.5; }
+    .condition-list li::before { content: ''; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: #4FBAB5; }
+
+    .examples-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem; }
+    .example-box { background: #fff; border: 0.5px solid #dde6e6; border-radius: 4px; padding: 0.75rem 1rem; }
+    .example-box.include { border-top: 2px solid #4FBAB5; }
+    .example-box.exclude { border-top: 2px solid #E16D5A; }
+    .ex-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .example-box.include .ex-label { color: #4FBAB5; }
+    .example-box.exclude .ex-label { color: #E16D5A; }
+    .example-box li { font-size: 12px; color: #555; }
+
+    .form-label { font-size: 13px; font-weight: 600; color: #1E2142; margin-bottom: 0.5rem; display: block; }
+    .required { color: #E16D5A; margin-left: 2px; }
+
+    input[type=text] {
+      width: 100%; padding: 10px 14px; border: 1px solid #c8d8d8;
+      border-radius: 4px; font-size: 14px; color: #1E2142;
+      background: #fff; transition: border-color 0.2s; outline: none;
+    }
+    input[type=text]:focus { border-color: #4FBAB5; box-shadow: 0 0 0 3px rgba(79,186,181,0.12); }
+
+    .question-card { background: #fff; border: 0.5px solid #dde6e6; border-radius: 4px; margin-bottom: 1rem; overflow: hidden; }
+
+    .tool-header {
+      background: #1E2142; padding: 0.75rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .tool-number { font-size: 12px; font-weight: 600; color: #4FBAB5; letter-spacing: 0.5px; text-transform: uppercase; }
+    .remove-btn {
+      background: none; border: none; color: #7a8ab5; cursor: pointer;
+      font-size: 18px; padding: 0; line-height: 1;
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .remove-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    .tool-body { padding: 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .tool-field { grid-column: span 1; }
+    .tool-field.full { grid-column: span 2; }
+    .field-sub-label { font-size: 12px; color: #656664; margin-bottom: 0.4rem; display: block; font-weight: 500; }
+
+    textarea {
+      width: 100%; padding: 10px 14px; border: 1px solid #c8d8d8;
+      border-radius: 4px; font-size: 13px; color: #1E2142;
+      background: #fff; resize: vertical; min-height: 70px;
+      font-family: inherit; line-height: 1.5; transition: border-color 0.2s; outline: none;
+    }
+    textarea:focus { border-color: #4FBAB5; box-shadow: 0 0 0 3px rgba(79,186,181,0.12); }
+
+    .frequency-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .freq-option { display: none; }
+    .freq-label {
+      padding: 6px 14px; border: 1px solid #c8d8d8; border-radius: 20px;
+      font-size: 12px; color: #656664; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .freq-option:checked + .freq-label { background: #1E2142; border-color: #1E2142; color: #4FBAB5; }
+
+    .add-tool-btn {
+      width: 100%; padding: 12px; border: 1.5px dashed #4FBAB5;
+      border-radius: 4px; background: transparent; color: #4FBAB5;
+      font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+    }
+    .add-tool-btn:hover { background: #f4f8f8; border-style: solid; }
+
+    .notes-box {
+      background: #f4f8f8; border: 0.5px solid #dde6e6; border-radius: 4px; padding: 1rem 1.25rem;
+    }
+    .notes-box ul { list-style: none; padding: 0; }
+    .notes-box ul li {
+      font-size: 13px; color: #555; padding: 5px 0 5px 1.2rem; position: relative; line-height: 1.5;
+    }
+    .notes-box ul li::before {
+      content: ''; position: absolute; left: 0; top: 12px;
+      width: 5px; height: 5px; border-radius: 50%; background: #4FBAB5;
+    }
+
+    .submit-section { text-align: center; padding: 1rem 0 0; }
+    .submit-btn {
+      background: #1E2142; color: #fff; border: none;
+      padding: 13px 48px; font-size: 15px; font-weight: 600;
+      border-radius: 4px; cursor: pointer; letter-spacing: 0.3px; transition: background 0.2s;
+    }
+    .submit-btn:hover { background: #4FBAB5; color: #1E2142; }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .footer-note { text-align: center; font-size: 12px; color: #999; margin-top: 1rem; }
+
+    .section-header { margin-bottom: 1rem; }
+    .section-header h3 { font-size: 16px; font-weight: 600; color: #1E2142; margin-bottom: 0.25rem; }
+    .section-header p { font-size: 13px; color: #777; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="card header-card">
+    <div class="logo-section">
+      <img src="color.png" alt="Impetus Logo" class="logo-img">
+    </div>
+
+    <p class="section-label">Internal Survey</p>
+    <h1 class="form-title">Daily Digital Tools Usage Survey</h1>
+    <div class="accent-line"></div>
+
+    <p class="purpose-text">
+      This survey aims to understand which digital tools employees use in their daily work. The results will help improve systems, enhance efficiency, and support better digital solutions across the organization.
+    </p>
+
+    <div class="definition-box">
+      <p class="conditions-title">What do we mean by "Digital Tools"?</p>
+      <p>Digital tools are any systems or online platforms you use regularly to perform your job tasks, manage your work, or communicate with your team.</p>
+      <p class="conditions-title">A tool must meet these conditions to be included:</p>
+      <ul class="condition-list" style="margin-bottom:0">
+        <li>It is related to your work tasks</li>
+        <li>It helps you complete your job or manage your responsibilities</li>
+        <li>You use it regularly (daily or almost daily)</li>
+      </ul>
+    </div>
+
+    <div class="examples-grid">
+      <div class="example-box include">
+        <p class="ex-label">Include</p>
+        <ul class="condition-list" style="margin:0">
+          <li>HR systems (e.g., Zoho People)</li>
+          <li>CRM systems</li>
+          <li>Timesheet / time tracking systems</li>
+          <li>Project management tools (e.g., Jira, ClickUp)</li>
+          <li>Communication tools (e.g., Teams, Slack)</li>
+        </ul>
+      </div>
+      <div class="example-box exclude">
+        <p class="ex-label">Do Not Include</p>
+        <ul class="condition-list" style="margin:0">
+          <li>General office programs (Word, PowerPoint)</li>
+          <li>Personal tools unrelated to your job</li>
+          <li>Tools you rarely use</li>
+          <li>Tools that don't impact your daily work</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-header">
+      <h3>Employee Information</h3>
+    </div>
+    <label class="form-label">Full Name <span class="required">*</span></label>
+    <input type="text" id="employeeName" placeholder="Enter your full name">
+  </div>
+
+  <div class="card">
+    <div class="section-header">
+      <h3>Digital Tools</h3>
+      <p>Please list all the digital tools you use in your daily work. For each tool, provide the name, how you use it, and how often.</p>
+    </div>
+    <div id="toolsContainer"></div>
+    <button class="add-tool-btn" onclick="addTool()">+ Add Another Tool</button>
+  </div>
+
+  <div class="card">
+    <div class="notes-box">
+      <p class="conditions-title" style="margin-bottom:0.5rem;">Important Notes</p>
+      <ul>
+        <li>Only include tools you actually use — not tools you have access to but don't use</li>
+        <li>Be as accurate and clear as possible</li>
+        <li>If you're unsure whether a tool should be included, add it anyway and describe how you use it</li>
+      </ul>
+    </div>
+    <div class="submit-section">
+      <button class="submit-btn" onclick="submitForm()">Submit Survey</button>
+      <p class="footer-note">Thank you for your cooperation — your response helps improve our digital workplace.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let toolCount = 0;
+
+  function addTool() {
+    toolCount++;
+    const id = toolCount;
+    const container = document.getElementById('toolsContainer');
+    const div = document.createElement('div');
+    div.className = 'question-card';
+    div.id = 'tool-' + id;
+    div.innerHTML = `
+      <div class="tool-header">
+        <span class="tool-number">Tool ${id}</span>
+        ${id > 1 ? `<button class="remove-btn" onclick="removeTool(${id})">&#x2715;</button>` : '<span></span>'}
+      </div>
+      <div class="tool-body">
+        <div class="tool-field full">
+          <span class="field-sub-label">Tool Name <span class="required">*</span></span>
+          <input type="text" id="tool-name-${id}" placeholder="e.g., Microsoft Teams, Jira, Zoho People...">
+        </div>
+        <div class="tool-field full">
+          <span class="field-sub-label">How do you use this tool in your daily work? <span class="required">*</span></span>
+          <textarea id="tool-desc-${id}" placeholder="Brief description of how you use this tool..."></textarea>
+        </div>
+        <div class="tool-field full">
+          <span class="field-sub-label">How often do you use this tool? <span class="required">*</span></span>
+          <div class="frequency-group">
+            <input type="radio" name="freq-${id}" id="freq-daily-${id}" value="Daily" class="freq-option">
+            <label for="freq-daily-${id}" class="freq-label">Daily</label>
+            <input type="radio" name="freq-${id}" id="freq-weekly-${id}" value="Several times per week" class="freq-option">
+            <label for="freq-weekly-${id}" class="freq-label">Several times per week</label>
+            <input type="radio" name="freq-${id}" id="freq-occ-${id}" value="Occasionally" class="freq-option">
+            <label for="freq-occ-${id}" class="freq-label">Occasionally</label>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+    renumberTools();
+  }
+
+  function removeTool(id) {
+    const el = document.getElementById('tool-' + id);
+    if (el) el.remove();
+    renumberTools();
+  }
+
+  function renumberTools() {
+    const cards = document.querySelectorAll('.question-card');
+    cards.forEach((card, index) => {
+      const num = card.querySelector('.tool-number');
+      if (num) num.textContent = 'Tool ' + (index + 1);
+    });
+  }
+
+  async function submitForm() {
+    const name = document.getElementById('employeeName').value.trim();
+    if (!name) { alert('Please enter your full name.'); return; }
+
+    const cards = document.querySelectorAll('.question-card');
+    if (cards.length === 0) { alert('Please add at least one digital tool.'); return; }
+
+    const tools = [];
+    let valid = true;
+
+    cards.forEach((card) => {
+      const id = card.id.replace('tool-', '');
+      const toolName = document.getElementById('tool-name-' + id)?.value.trim();
+      const toolDesc = document.getElementById('tool-desc-' + id)?.value.trim();
+      const freqSelected = document.querySelector(`input[name="freq-${id}"]:checked`);
+      if (!toolName || !toolDesc || !freqSelected) { valid = false; return; }
+      tools.push({ toolName, description: toolDesc, frequency: freqSelected.value });
+    });
+
+    if (!valid) { alert('Please complete all fields for each tool.'); return; }
+
+    // ======================================================
+    // عدّل هذا السطر فقط — ضع رابط الـ Google Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmuMX1FnW7xVET3bSeasivqtorMIWnZZrv148CJ_e8SqbTcLrDMnPDhJuMs4MDUsit/exec";
+    // ======================================================
+
+    const submitBtn = document.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          employeeName: name,
+          tools: tools
+        })
+      });
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Survey';
+      alert('Thank you, ' + name + '! Your response has been submitted successfully.');
+      document.getElementById('employeeName').value = '';
+      document.getElementById('toolsContainer').innerHTML = '';
+      toolCount = 0;
+      addTool();
+
+    } catch (error) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Survey';
+      alert('Something went wrong. Please try again.');
+    }
+  }
+
+  // تحميل أول أداة عند فتح الصفحة
+  document.addEventListener('DOMContentLoaded', function() {
+    addTool();
+  });
+</script>
+
+</body>
+</html>
