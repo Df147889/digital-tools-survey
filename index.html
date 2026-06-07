@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Digital Tools Usage Survey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --font-en: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; --font-ar: 'Cairo', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-en); }
+    body.ar { font-family: var(--font-ar); }
+
+    .lang-switcher {
+      position: fixed; top: 1rem; right: 1rem; z-index: 999;
+      display: flex; gap: 4px; background: #fff;
+      border: 1px solid #dde6e6; border-radius: 20px; padding: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .lang-btn {
+      padding: 5px 14px; border-radius: 16px; border: none;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; background: transparent; color: #777;
+    }
+    .lang-btn.active { background: #1E2142; color: #4FBAB5; }
+
+    .page { background: #f0f4f5; min-height: 100vh; padding: 2rem 1rem; }
+
+    .card {
+      background: #fff; border-radius: 4px;
+      max-width: 780px; margin: 0 auto 1.5rem;
+      padding: 2rem 2.5rem; border: 0.5px solid #dde6e6;
+    }
+    .header-card { border-top: 5px solid #1E2142; }
+    .logo-section { margin-bottom: 1.5rem; }
+    .logo-img { max-height: 60px; max-width: 200px; object-fit: contain; }
+
+    .form-title { font-size: 22px; font-weight: 700; color: #1E2142; margin-bottom: 0.4rem; }
+    .accent-line { width: 40px; height: 3px; background: #4FBAB5; margin-bottom: 1.25rem; border-radius: 2px; }
+    .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #4FBAB5; margin-bottom: 0.5rem; }
+    .purpose-text { font-size: 14px; color: #444; line-height: 1.8; margin-bottom: 1.25rem; }
+
+    .definition-box {
+      background: #f4f8f8; border-radius: 0 4px 4px 0;
+      padding: 1rem 1.25rem; margin-bottom: 1rem;
+    }
+    [dir="ltr"] .definition-box { border-left: 3px solid #4FBAB5; }
+    [dir="rtl"] .definition-box { border-right: 3px solid #4FBAB5; border-left: none; border-radius: 4px 0 0 4px; }
+
+    .definition-box p { font-size: 14px; color: #444; line-height: 1.8; margin-bottom: 0.75rem; }
+    .definition-box p:last-child { margin-bottom: 0; }
+    .conditions-title { font-size: 13px; font-weight: 600; color: #1E2142; margin-bottom: 0.5rem; }
+
+    .condition-list { list-style: none; padding: 0; margin-bottom: 0.75rem; }
+    .condition-list li { font-size: 13px; color: #555; padding: 4px 0; position: relative; line-height: 1.6; }
+    [dir="ltr"] .condition-list li { padding-left: 1.2rem; }
+    [dir="rtl"] .condition-list li { padding-right: 1.2rem; }
+    [dir="ltr"] .condition-list li::before { content: ''; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: #4FBAB5; }
+    [dir="rtl"] .condition-list li::before { content: ''; position: absolute; right: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: #4FBAB5; }
+
+    .examples-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem; }
+    .example-box { background: #fff; border: 0.5px solid #dde6e6; border-radius: 4px; padding: 0.75rem 1rem; }
+    .example-box.include { border-top: 2px solid #4FBAB5; }
+    .example-box.exclude { border-top: 2px solid #E16D5A; }
+    .ex-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .example-box.include .ex-label { color: #4FBAB5; }
+    .example-box.exclude .ex-label { color: #E16D5A; }
+    .example-box li { font-size: 12px; color: #555; }
+
+    .form-label { font-size: 13px; font-weight: 600; color: #1E2142; margin-bottom: 0.5rem; display: block; }
+    .required { color: #E16D5A; margin-left: 2px; }
+
+    input[type=text] {
+      width: 100%; padding: 10px 14px; border: 1px solid #c8d8d8;
+      border-radius: 4px; font-size: 14px; color: #1E2142;
+      background: #fff; transition: border-color 0.2s; outline: none;
+    }
+    input[type=text]:focus { border-color: #4FBAB5; box-shadow: 0 0 0 3px rgba(79,186,181,0.12); }
+
+    .question-card { background: #fff; border: 0.5px solid #dde6e6; border-radius: 4px; margin-bottom: 1rem; overflow: hidden; }
+
+    .tool-header { background: #1E2142; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+    .tool-number { font-size: 12px; font-weight: 600; color: #4FBAB5; letter-spacing: 0.5px; text-transform: uppercase; }
+    .remove-btn {
+      background: none; border: none; color: #7a8ab5; cursor: pointer;
+      font-size: 18px; padding: 0; line-height: 1; width: 24px; height: 24px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+    }
+    .remove-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    .tool-body { padding: 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .tool-field { grid-column: span 1; }
+    .tool-field.full { grid-column: span 2; }
+    .field-sub-label { font-size: 12px; color: #656664; margin-bottom: 0.4rem; display: block; font-weight: 500; }
+
+    textarea {
+      width: 100%; padding: 10px 14px; border: 1px solid #c8d8d8;
+      border-radius: 4px; font-size: 13px; color: #1E2142;
+      background: #fff; resize: vertical; min-height: 70px;
+      line-height: 1.6; transition: border-color 0.2s; outline: none;
+      font-family: inherit;
+    }
+    textarea:focus { border-color: #4FBAB5; box-shadow: 0 0 0 3px rgba(79,186,181,0.12); }
+
+    .frequency-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .freq-option { display: none; }
+    .freq-label {
+      padding: 6px 14px; border: 1px solid #c8d8d8; border-radius: 20px;
+      font-size: 12px; color: #656664; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .freq-option:checked + .freq-label { background: #1E2142; border-color: #1E2142; color: #4FBAB5; }
+
+    .add-tool-btn {
+      width: 100%; padding: 12px; border: 1.5px dashed #4FBAB5;
+      border-radius: 4px; background: transparent; color: #4FBAB5;
+      font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+      font-family: inherit;
+    }
+    .add-tool-btn:hover { background: #f4f8f8; border-style: solid; }
+
+    .notes-box { background: #f4f8f8; border: 0.5px solid #dde6e6; border-radius: 4px; padding: 1rem 1.25rem; }
+    .notes-box ul { list-style: none; padding: 0; }
+    .notes-box ul li { font-size: 13px; color: #555; padding: 5px 0; position: relative; line-height: 1.6; }
+    [dir="ltr"] .notes-box ul li { padding-left: 1.2rem; }
+    [dir="rtl"] .notes-box ul li { padding-right: 1.2rem; }
+    [dir="ltr"] .notes-box ul li::before { content: ''; position: absolute; left: 0; top: 12px; width: 5px; height: 5px; border-radius: 50%; background: #4FBAB5; }
+    [dir="rtl"] .notes-box ul li::before { content: ''; position: absolute; right: 0; top: 12px; width: 5px; height: 5px; border-radius: 50%; background: #4FBAB5; }
+
+    .submit-section { text-align: center; padding: 1rem 0 0; }
+    .submit-btn {
+      background: #1E2142; color: #fff; border: none;
+      padding: 13px 48px; font-size: 15px; font-weight: 600;
+      border-radius: 4px; cursor: pointer; letter-spacing: 0.3px; transition: background 0.2s;
+      font-family: inherit;
+    }
+    .submit-btn:hover { background: #4FBAB5; color: #1E2142; }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .footer-note { text-align: center; font-size: 12px; color: #999; margin-top: 1rem; }
+
+    .section-header { margin-bottom: 1rem; }
+    .section-header h3 { font-size: 16px; font-weight: 600; color: #1E2142; margin-bottom: 0.25rem; }
+    .section-header p { font-size: 13px; color: #777; line-height: 1.6; }
+
+    @media (max-width: 520px) {
+      .examples-grid { grid-template-columns: 1fr; }
+      .tool-body { grid-template-columns: 1fr; }
+      .tool-field.full { grid-column: span 1; }
+      .card { padding: 1.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="lang-switcher">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">ع</button>
+</div>
+
+<div class="page">
+
+  <div class="card header-card">
+    <div class="logo-section">
+      <img src="color.png" alt="Impetus Logo" class="logo-img">
+    </div>
+    <p class="section-label" data-key="sectionLabel"></p>
+    <h1 class="form-title" data-key="formTitle"></h1>
+    <div class="accent-line"></div>
+    <p class="purpose-text" data-key="purposeText"></p>
+
+    <div class="definition-box">
+      <p class="conditions-title" data-key="defTitle"></p>
+      <p data-key="defBody"></p>
+      <p class="conditions-title" data-key="condTitle"></p>
+      <ul class="condition-list" style="margin-bottom:0" id="conditionsList"></ul>
+    </div>
+
+    <div class="examples-grid">
+      <div class="example-box include">
+        <p class="ex-label" data-key="includeLabel"></p>
+        <ul class="condition-list" style="margin:0" id="includeList"></ul>
+      </div>
+      <div class="example-box exclude">
+        <p class="ex-label" data-key="excludeLabel"></p>
+        <ul class="condition-list" style="margin:0" id="excludeList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-header">
+      <h3 data-key="empInfoTitle"></h3>
+    </div>
+    <label class="form-label" data-key="nameLabel"><span class="required">*</span></label>
+    <input type="text" id="employeeName" data-key-placeholder="namePlaceholder">
+  </div>
+
+  <div class="card">
+    <div class="section-header">
+      <h3 data-key="toolsSectionTitle"></h3>
+      <p data-key="toolsSectionDesc"></p>
+    </div>
+    <div id="toolsContainer"></div>
+    <button class="add-tool-btn" onclick="addTool()" data-key="addToolBtn"></button>
+  </div>
+
+  <div class="card">
+    <div class="notes-box">
+      <p class="conditions-title" style="margin-bottom:0.5rem;" data-key="notesTitle"></p>
+      <ul id="notesList"></ul>
+    </div>
+    <div class="submit-section">
+      <button class="submit-btn" id="submitBtn" onclick="submitForm()" data-key="submitBtn"></button>
+      <p class="footer-note" data-key="footerNote"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const translations = {
+    en: {
+      sectionLabel: "Internal Survey",
+      formTitle: "Daily Digital Tools Usage Survey",
+      purposeText: "This survey aims to understand which digital tools employees use in their daily work. The results will help improve systems, enhance efficiency, and support better digital solutions across the organization.",
+      defTitle: 'What do we mean by "Digital Tools"?',
+      defBody: "Digital tools are any systems or online platforms you use regularly to perform your job tasks, manage your work, or communicate with your team.",
+      condTitle: "A tool must meet these conditions to be included:",
+      conditions: [
+        "It is related to your work tasks",
+        "It helps you complete your job or manage your responsibilities",
+        "You use it regularly (daily or almost daily)"
+      ],
+      includeLabel: "Include",
+      includedItems: [
+        "HR systems (e.g., Zoho People)",
+        "CRM systems",
+        "Timesheet / time tracking systems",
+        "Project management tools (e.g., Jira, ClickUp)",
+        "Communication tools (e.g., Teams, Slack)"
+      ],
+      excludeLabel: "Do Not Include",
+      excludedItems: [
+        "General office programs (Word, PowerPoint)",
+        "Personal tools unrelated to your job",
+        "Tools you rarely use",
+        "Tools that don't impact your daily work"
+      ],
+      empInfoTitle: "Employee Information",
+      nameLabel: "Full Name ",
+      namePlaceholder: "Enter your full name",
+      toolsSectionTitle: "Digital Tools",
+      toolsSectionDesc: "Please list all the digital tools you use in your daily work. For each tool, provide the name, how you use it, and how often.",
+      addToolBtn: "+ Add Another Tool",
+      notesTitle: "Important Notes",
+      notes: [
+        "Only include tools you actually use — not tools you have access to but don't use",
+        "Be as accurate and clear as possible",
+        "If you're unsure whether a tool should be included, add it anyway and describe how you use it"
+      ],
+      submitBtn: "Submit Survey",
+      submittingBtn: "Submitting...",
+      footerNote: "Thank you for your cooperation — your response helps improve our digital workplace.",
+      toolLabel: "Tool",
+      toolNameLabel: "Tool Name ",
+      toolNamePlaceholder: "e.g., Microsoft Teams, Jira, Zoho People...",
+      toolDescLabel: "How do you use this tool in your daily work? ",
+      toolDescPlaceholder: "Brief description of how you use this tool...",
+      toolFreqLabel: "How often do you use this tool? ",
+      freqDaily: "Daily",
+      freqWeekly: "Several times per week",
+      freqOcc: "Occasionally",
+      alertName: "Please enter your full name.",
+      alertNoTools: "Please add at least one digital tool.",
+      alertComplete: "Please complete all fields for each tool.",
+      alertSuccess: (name) => `Thank you, ${name}! Your response has been submitted successfully.`,
+      alertError: "Something went wrong. Please try again."
+    },
+    ar: {
+      sectionLabel: "استبيان داخلي",
+      formTitle: "استبيان استخدام الأدوات الرقمية اليومية",
+      purposeText: "يهدف هذا الاستبيان إلى التعرف على الأدوات الرقمية التي يستخدمها الموظفون في عملهم اليومي. ستُساهم النتائج في تحسين الأنظمة ورفع الكفاءة ودعم الحلول الرقمية في المنظمة.",
+      defTitle: 'ماذا نعني بـ "الأدوات الرقمية"؟',
+      defBody: "الأدوات الرقمية هي أي أنظمة أو منصات إلكترونية تستخدمها بانتظام لأداء مهام عملك أو إدارة مسؤولياتك أو التواصل مع فريقك.",
+      condTitle: "يجب أن تستوفي الأداة هذه الشروط حتى تُدرَج:",
+      conditions: [
+        "ترتبط بمهام عملك",
+        "تُساعدك على إنجاز عملك أو إدارة مسؤولياتك",
+        "تستخدمها بانتظام (يومياً أو شبه يومي)"
+      ],
+      includeLabel: "يشمل",
+      includedItems: [
+        "أنظمة الموارد البشرية (مثل Zoho People)",
+        "أنظمة إدارة علاقات العملاء (CRM)",
+        "أنظمة تتبع الوقت والحضور",
+        "أدوات إدارة المشاريع (مثل Jira، ClickUp)",
+        "أدوات التواصل (مثل Teams، Slack)"
+      ],
+      excludeLabel: "لا يشمل",
+      excludedItems: [
+        "برامج المكتب العامة (Word، PowerPoint)",
+        "الأدوات الشخصية غير المرتبطة بعملك",
+        "الأدوات التي تستخدمها نادراً",
+        "الأدوات التي لا تؤثر في عملك اليومي"
+      ],
+      empInfoTitle: "بيانات الموظف",
+      nameLabel: "الاسم الكامل ",
+      namePlaceholder: "أدخل اسمك الكامل",
+      toolsSectionTitle: "الأدوات الرقمية",
+      toolsSectionDesc: "يرجى سرد جميع الأدوات الرقمية التي تستخدمها في عملك اليومي، مع ذكر اسم كل أداة وطريقة استخدامها وتكرار ذلك.",
+      addToolBtn: "+ إضافة أداة أخرى",
+      notesTitle: "ملاحظات مهمة",
+      notes: [
+        "أدرج الأدوات التي تستخدمها فعلاً فقط، وليس تلك التي تملك صلاحية الوصول إليها دون استخدام",
+        "كن دقيقاً وواضحاً قدر الإمكان",
+        "إذا لم تكن متأكداً من إدراج أداة، أضفها مع وصف كيفية استخدامك لها"
+      ],
+      submitBtn: "إرسال الاستبيان",
+      submittingBtn: "جارٍ الإرسال...",
+      footerNote: "شكراً لتعاونك — إجابتك تُساهم في تحسين بيئة العمل الرقمية.",
+      toolLabel: "أداة",
+      toolNameLabel: "اسم الأداة ",
+      toolNamePlaceholder: "مثال: Microsoft Teams، Jira، Zoho People...",
+      toolDescLabel: "كيف تستخدم هذه الأداة في عملك اليومي؟ ",
+      toolDescPlaceholder: "وصف موجز لطريقة استخدامك لهذه الأداة...",
+      toolFreqLabel: "كم مرة تستخدم هذه الأداة؟ ",
+      freqDaily: "يومياً",
+      freqWeekly: "عدة مرات في الأسبوع",
+      freqOcc: "أحياناً",
+      alertName: "يرجى إدخال اسمك الكامل.",
+      alertNoTools: "يرجى إضافة أداة رقمية واحدة على الأقل.",
+      alertComplete: "يرجى استكمال جميع الحقول لكل أداة.",
+      alertSuccess: (name) => `شكراً لك، ${name}! تم إرسال إجابتك بنجاح.`,
+      alertError: "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    }
+  };
+
+  let currentLang = 'en';
+  let toolCount = 0;
+
+  function setLang(lang) {
+    currentLang = lang;
+    const html = document.documentElement;
+    const body = document.body;
+
+    if (lang === 'ar') {
+      html.setAttribute('lang', 'ar');
+      html.setAttribute('dir', 'rtl');
+      body.classList.add('ar');
+      document.getElementById('btn-ar').classList.add('active');
+      document.getElementById('btn-en').classList.remove('active');
+    } else {
+      html.setAttribute('lang', 'en');
+      html.setAttribute('dir', 'ltr');
+      body.classList.remove('ar');
+      document.getElementById('btn-en').classList.add('active');
+      document.getElementById('btn-ar').classList.remove('active');
+    }
+
+    const t = translations[lang];
+
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.getAttribute('data-key');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+
+    document.querySelectorAll('[data-key-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-key-placeholder');
+      if (t[key] !== undefined) el.placeholder = t[key];
+    });
+
+    renderList('conditionsList', t.conditions);
+    renderList('includeList', t.includedItems);
+    renderList('excludeList', t.excludedItems);
+    renderList('notesList', t.notes);
+
+    document.querySelectorAll('.question-card').forEach((card, index) => {
+      const id = card.id.replace('tool-', '');
+      const num = card.querySelector('.tool-number');
+      if (num) num.textContent = `${t.toolLabel} ${index + 1}`;
+
+      const nameLabel = card.querySelector(`[data-field="name-label-${id}"]`);
+      if (nameLabel) nameLabel.innerHTML = t.toolNameLabel + '<span class="required">*</span>';
+
+      const nameInput = card.querySelector(`#tool-name-${id}`);
+      if (nameInput) nameInput.placeholder = t.toolNamePlaceholder;
+
+      const descLabel = card.querySelector(`[data-field="desc-label-${id}"]`);
+      if (descLabel) descLabel.innerHTML = t.toolDescLabel + '<span class="required">*</span>';
+
+      const descInput = card.querySelector(`#tool-desc-${id}`);
+      if (descInput) descInput.placeholder = t.toolDescPlaceholder;
+
+      const freqLabel = card.querySelector(`[data-field="freq-label-${id}"]`);
+      if (freqLabel) freqLabel.innerHTML = t.toolFreqLabel + '<span class="required">*</span>';
+
+      const dailyLabel = card.querySelector(`[data-field="freq-daily-label-${id}"]`);
+      if (dailyLabel) dailyLabel.textContent = t.freqDaily;
+
+      const weeklyLabel = card.querySelector(`[data-field="freq-weekly-label-${id}"]`);
+      if (weeklyLabel) weeklyLabel.textContent = t.freqWeekly;
+
+      const occLabel = card.querySelector(`[data-field="freq-occ-label-${id}"]`);
+      if (occLabel) occLabel.textContent = t.freqOcc;
+    });
+
+    renumberTools();
+  }
+
+  function renderList(id, items) {
+    const ul = document.getElementById(id);
+    if (!ul) return;
+    ul.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+  }
+
+  function addTool() {
+    toolCount++;
+    const id = toolCount;
+    const t = translations[currentLang];
+    const container = document.getElementById('toolsContainer');
+    const div = document.createElement('div');
+    div.className = 'question-card';
+    div.id = 'tool-' + id;
+    div.innerHTML = `
+      <div class="tool-header">
+        <span class="tool-number">${t.toolLabel} ${id}</span>
+        ${id > 1 ? `<button class="remove-btn" onclick="removeTool(${id})">&#x2715;</button>` : '<span></span>'}
+      </div>
+      <div class="tool-body">
+        <div class="tool-field full">
+          <span class="field-sub-label" data-field="name-label-${id}">${t.toolNameLabel}<span class="required">*</span></span>
+          <input type="text" id="tool-name-${id}" placeholder="${t.toolNamePlaceholder}">
+        </div>
+        <div class="tool-field full">
+          <span class="field-sub-label" data-field="desc-label-${id}">${t.toolDescLabel}<span class="required">*</span></span>
+          <textarea id="tool-desc-${id}" placeholder="${t.toolDescPlaceholder}"></textarea>
+        </div>
+        <div class="tool-field full">
+          <span class="field-sub-label" data-field="freq-label-${id}">${t.toolFreqLabel}<span class="required">*</span></span>
+          <div class="frequency-group">
+            <input type="radio" name="freq-${id}" id="freq-daily-${id}" value="Daily" class="freq-option">
+            <label for="freq-daily-${id}" class="freq-label" data-field="freq-daily-label-${id}">${t.freqDaily}</label>
+            <input type="radio" name="freq-${id}" id="freq-weekly-${id}" value="Several times per week" class="freq-option">
+            <label for="freq-weekly-${id}" class="freq-label" data-field="freq-weekly-label-${id}">${t.freqWeekly}</label>
+            <input type="radio" name="freq-${id}" id="freq-occ-${id}" value="Occasionally" class="freq-option">
+            <label for="freq-occ-${id}" class="freq-label" data-field="freq-occ-label-${id}">${t.freqOcc}</label>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+    renumberTools();
+  }
+
+  function removeTool(id) {
+    const el = document.getElementById('tool-' + id);
+    if (el) el.remove();
+    renumberTools();
+  }
+
+  function renumberTools() {
+    const t = translations[currentLang];
+    const cards = document.querySelectorAll('.question-card');
+    cards.forEach((card, index) => {
+      const num = card.querySelector('.tool-number');
+      if (num) num.textContent = `${t.toolLabel} ${index + 1}`;
+    });
+  }
+
+  async function submitForm() {
+    const t = translations[currentLang];
+    const name = document.getElementById('employeeName').value.trim();
+    if (!name) { alert(t.alertName); return; }
+
+    const cards = document.querySelectorAll('.question-card');
+    if (cards.length === 0) { alert(t.alertNoTools); return; }
+
+    const tools = [];
+    let valid = true;
+
+    cards.forEach((card) => {
+      const id = card.id.replace('tool-', '');
+      const toolName = document.getElementById('tool-name-' + id)?.value.trim();
+      const toolDesc = document.getElementById('tool-desc-' + id)?.value.trim();
+      const freqSelected = document.querySelector(`input[name="freq-${id}"]:checked`);
+      if (!toolName || !toolDesc || !freqSelected) { valid = false; return; }
+      tools.push({ toolName, description: toolDesc, frequency: freqSelected.value });
+    });
+
+    if (!valid) { alert(t.alertComplete); return; }
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmuMX1FnW7xVET3bSeasivqtorMIWnZZrv148CJ_e8SqbTcLrDMnPDhJuMs4MDUsit/exec";
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = t.submittingBtn;
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          language: currentLang,
+          employeeName: name,
+          tools: tools
+        })
+      });
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = t.submitBtn;
+      alert(t.alertSuccess(name));
+      document.getElementById('employeeName').value = '';
+      document.getElementById('toolsContainer').innerHTML = '';
+      toolCount = 0;
+      addTool();
+
+    } catch (error) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = t.submitBtn;
+      alert(t.alertError);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    setLang('en');
+    addTool();
+  });
+</script>
+
+</body>
+</html>
